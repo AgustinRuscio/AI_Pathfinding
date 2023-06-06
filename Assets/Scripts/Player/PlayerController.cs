@@ -49,9 +49,6 @@ public class PlayerController
     private void PauseButton()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            DeleteMovement();
-        }
+            EventManager.Trigger(EventEnum.Pause);
     }
-
 }
