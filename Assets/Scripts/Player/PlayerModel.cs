@@ -24,6 +24,7 @@ public class PlayerModel : MonoBehaviour
     [SerializeField]
     private float _jumpforce;
 
+    [SerializeField]
     private Vector3 _moveDirection;
 
     event Action OnJump;
@@ -44,7 +45,7 @@ public class PlayerModel : MonoBehaviour
     private void Update()
     {
         _playerContoller.ArtificialUpdate();
-        _playerView.OnMove(_moveDirection.x, _moveDirection.z);
+        _playerView.OnMove(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
 
         if(_moveDirection == Vector3.zero)
@@ -61,13 +62,13 @@ public class PlayerModel : MonoBehaviour
 
     public void Move(Vector3 dir)
     {
-        _moveDirection = dir;
+        _moveDirection = dir.x * transform.right;
+        _moveDirection += dir.z * transform.forward;
 
         _moveDirection *= _speed;
-
         _moveDirection.Normalize();
 
-        _rigidbody.AddForce(dir, ForceMode.Acceleration);
+        _rigidbody.AddForce(_moveDirection, ForceMode.Acceleration);
     }
 
     private bool CheckFloor()

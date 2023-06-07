@@ -3094,6 +3094,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 5
   _jumpforce: 5
+  _moveDirection: {x: 0, y: 0, z: 0}
 --- !u!136 &1245056070
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -5832,8 +5833,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e57c3739a22cbec4cb2e4a56a39ffb40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 100
+  _speed: 500
   _jumpforce: 5
+  _moveDirection: {x: 0, y: 0, z: 0}
 --- !u!54 &919132148840164891
 Rigidbody:
   m_ObjectHideFlags: 0
