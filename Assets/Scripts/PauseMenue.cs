@@ -7,5 +7,5 @@ public class PauseMenue : MonoBehaviour
 {
     public void MenuButton() => EventManager.Trigger(EventEnum.BackToMenue);
 
-    public void ResumeButton() => EventManager.Trigger(EventEnum.Resume);
+    public void ResumeButton() => EventManager.Trigger(EventEnum.Resume, false);
 }

@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
         else
             Destroy(gameObject);
 
+        Cursor.lockState = CursorLockMode.Locked;
+
         EventManager.Subscribe(EventEnum.Pause, Pause);
         EventManager.Subscribe(EventEnum.Resume, Resume);
         EventManager.Subscribe(EventEnum.BackToMenue, BacktoMenue);
@@ -31,17 +33,20 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 0f;
         _pauseMenu.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
     }
 
     private void Resume(params object[] parameters)
     {
         Time.timeScale = 1f;
         _pauseMenu.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void BacktoMenue(params object[] parameters)
     {
         Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadScene(menuName);
     }
 

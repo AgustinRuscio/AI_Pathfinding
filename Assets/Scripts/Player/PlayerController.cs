@@ -49,6 +49,6 @@ public class PlayerController
     private void PauseButton()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
-            EventManager.Trigger(EventEnum.Pause);
+            EventManager.Trigger(EventEnum.Pause, true);
     }
 }
