@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,7 +9,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private GameObject _pauseMenu;
-    
+
+    const string menuName = "Menue";
+
     private void Awake()
     {
         if(Instance == null)
@@ -18,7 +21,11 @@ public class GameManager : MonoBehaviour
 
         EventManager.Subscribe(EventEnum.Pause, Pause);
         EventManager.Subscribe(EventEnum.Resume, Resume);
+        EventManager.Subscribe(EventEnum.BackToMenue, BacktoMenue);
     }
+
+
+    #region PauseMenue
 
     private void Pause(params object[] parameters)
     {
@@ -32,9 +39,18 @@ public class GameManager : MonoBehaviour
         _pauseMenu.SetActive(false);
     }
 
+    private void BacktoMenue(params object[] parameters)
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(menuName);
+    }
+
+    #endregion
+
     private void OnDestroy()
     {
         EventManager.Unsubscribe(EventEnum.Pause, Pause);
         EventManager.Unsubscribe(EventEnum.Resume, Resume);
+        EventManager.Unsubscribe(EventEnum.BackToMenue, BacktoMenue);
     }
 }

@@ -6,4 +6,5 @@ public enum EventEnum
 {
     Pause,
     Resume,
+    BackToMenue,
 }

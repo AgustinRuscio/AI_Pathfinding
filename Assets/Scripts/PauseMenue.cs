@@ -5,13 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenue : MonoBehaviour
 {
-    const string menuName = "Menue";
-
-    public void MenuButton()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(menuName);
-    }
+    public void MenuButton() => EventManager.Trigger(EventEnum.BackToMenue);
 
     public void ResumeButton() => EventManager.Trigger(EventEnum.Resume);
 }
