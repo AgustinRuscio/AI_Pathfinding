@@ -1,3 +1,8 @@
+//--------------------------------------------
+//          Agustin Ruscio & Merdeces Riego
+//--------------------------------------------
+
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,5 +34,4 @@ public class AbstractScreen : MonoBehaviour, IScreen
     }
 
     public virtual void BTN_Back() => ScreenManager.instance.Pop();
-    
 }

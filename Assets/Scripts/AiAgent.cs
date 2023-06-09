@@ -1,3 +1,8 @@
+//--------------------------------------------
+//          Agustin Ruscio & Merdeces Riego
+//--------------------------------------------
+
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,10 +40,8 @@ public abstract class AiAgent : MonoBehaviour
 
     public int n = 0;
 
-    protected virtual void Update()
-    {
-        Move();
-    }
+    protected virtual void Update() => Move();
+    
 
     public void Move()
     {
@@ -85,11 +88,8 @@ public abstract class AiAgent : MonoBehaviour
         return goalNode;
     }
 
-    public Node GetStartNode()
-    {
-        return _currentNode;
-    }
-
+    public Node GetStartNode() => _currentNode; //Return
+    
 
     public void SetCurrentNode(Node pos, int index)
     {
@@ -97,10 +97,8 @@ public abstract class AiAgent : MonoBehaviour
         _nodeArrayIndex = index;
     }
 
-    Vector3 DirFromAngel(float angleInDegrees)
-    {
-        return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
-    }
+    Vector3 DirFromAngel(float angleInDegrees) => new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
+    
 
     private void OnDrawGizmos()
     {

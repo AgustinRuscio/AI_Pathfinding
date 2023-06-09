@@ -1,9 +1,17 @@
+//--------------------------------------------
+//          Agustin Ruscio & Merdeces Riego
+//--------------------------------------------
+
+
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
 public class Pathfinding : States
 {
+    private int index = 0;
+
     List<Vector3> path;
 
     Node startNode;
@@ -26,41 +34,42 @@ public class Pathfinding : States
     public override void OnStart()
     {
         agent.n++;
-        Debug.Log("Entro al pathFinding" + agent.n);
+        UnityEngine.Debug.Log("Entro al pathFinding" + agent.n);
         index = 0;
+
         goalNode = agent.SetEndNode();
         startNode = agent.GetStartNode();
 
         path = AStar(startNode, goalNode);
     }
 
-    int index = 0;
-
     public override void Update()
     {
-        if (index >= path.Count) finiteStateMach.ChangeState(StatesEnum.Patrol);
+        if (index < 0) UnityEngine.Debug.Log("Soy menos de cero");
 
-        if (Vector3.Distance(_transform.position, NextTarget(index)) > 2)
+        if (index >= path.Count)
         {
+            UnityEngine.Debug.Log("aaa");
+            index = 0; 
+            finiteStateMach.ChangeState(StatesEnum.Patrol);
+        }
+
+        if(index >= path.Count) 
+
+        if (Vector3.Distance(_transform.position, NextTarget(index)) > 2) //3
             agent.ApplyForce(agent.Seek(NextTarget(index)));
-        }
         else
-        {
-            index++;
-        }
+            index++;      
     }
 
-       
-
-    private Vector3 NextTarget(int i)
-    {
-        return path[i];
-    }
-
+    private Vector3 NextTarget(int i) => path[i]; //4
+    
     public override void OnStop()
     {
         agent.n++;
-        Debug.Log("Salgo al pathFinding" + agent.n);
+        UnityEngine.Debug.Log("Salgo al pathFinding" + agent.n);
+
+        index = 0;
     }
     public List<Vector3> AStar(Node startingNode, Node goalNode)
     {

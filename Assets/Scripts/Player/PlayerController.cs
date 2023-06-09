@@ -1,3 +1,8 @@
+//--------------------------------------------
+//          Agustin Ruscio & Merdeces Riego
+//--------------------------------------------
+
+
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -15,10 +20,8 @@ public class PlayerController
         return this;
     }
 
-    public PlayerController()
-    {
-        SetMovement();
-    }
+    public PlayerController() => SetMovement();
+    
 
     private void SetMovement()
     {
@@ -26,10 +29,8 @@ public class PlayerController
         OnPlay += MovementController;
     }
 
-    private void DeleteMovement()
-    {
-        OnPlay = null;
-    }
+    private void DeleteMovement() => OnPlay = null;
+    
 
     public void ArtificialUpdate()
     {
@@ -39,7 +40,6 @@ public class PlayerController
 
     private void MovementController() => _playerModel.Move(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")));
     
-
     private void JumpController()
     {
         if (Input.GetKeyDown(KeyCode.Space))

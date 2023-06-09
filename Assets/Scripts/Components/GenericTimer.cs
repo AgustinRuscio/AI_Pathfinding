@@ -1,3 +1,8 @@
+//--------------------------------------------
+//          Agustin Ruscio & Merdeces Riego
+//--------------------------------------------
+
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +12,6 @@ public class GenericTimer
     private float timer;
 
     private float coolDown;
-
     
     public GenericTimer SetCoolDown(float _coolDown)
     {

@@ -1,8 +1,12 @@
+//--------------------------------------------
+//          Agustin Ruscio & Merdeces Riego
+//--------------------------------------------
+
+
 using UnityEngine;
 
 public class MainPanelScreen : AbstractScreen
 {
-
     [SerializeField]
     private AbstractScreen _creditsPanel = null;
 

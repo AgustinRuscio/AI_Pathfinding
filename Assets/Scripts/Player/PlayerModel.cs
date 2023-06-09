@@ -1,3 +1,8 @@
+//--------------------------------------------
+//          Agustin Ruscio & Merdeces Riego
+//--------------------------------------------
+
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -71,12 +76,7 @@ public class PlayerModel : MonoBehaviour
         _rigidbody.AddForce(_moveDirection, ForceMode.Acceleration);
     }
 
-    private bool CheckFloor()
-    {
-        return Physics.Raycast(transform.position, Vector3.down, 1.2f);
-    }
-
-    public void StopMovement() => _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y,0);
+    private bool CheckFloor() => Physics.Raycast(transform.position, Vector3.down, 1.2f);
     
-
+    public void StopMovement() => _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y,0);
 }

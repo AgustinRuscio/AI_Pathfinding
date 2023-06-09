@@ -1,3 +1,8 @@
+//--------------------------------------------
+//          Agustin Ruscio & Merdeces Riego
+//--------------------------------------------
+
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,9 +15,9 @@ public class EnemyModel : AiAgent
 
     private Animator _animator;
 
-    List<Vector3> path = new List<Vector3>();
+    private List<Vector3> _path = new List<Vector3>();
 
-    bool seaching = false;
+    private bool _seaching = false;
 
     private void Awake()
     {
@@ -58,10 +63,9 @@ public class EnemyModel : AiAgent
     }
 
     
-
     void MoveToNode()
     {  
-        Vector3 target = path[0];
+        Vector3 target = _path[0];
 
         ApplyForce(Seek(target));
 
@@ -70,8 +74,8 @@ public class EnemyModel : AiAgent
 
         if (Vector3.Distance(transform.position, target) <= 2)
         {
-            path.RemoveAt(0);
-            if(path.Count == 0) seaching = false;
+            _path.RemoveAt(0);
+            if(_path.Count == 0) _seaching = false;
         }
         
     }
