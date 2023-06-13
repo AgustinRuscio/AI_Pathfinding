@@ -28,6 +28,7 @@ public class Node : MonoBehaviour
         get { return _cost; }
     }
 
+
     public List<Node> GetNeighbors()
     {
         List<Node> neighborsLits = new List<Node>();

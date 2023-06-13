@@ -11,7 +11,6 @@ using UnityEngine;
 
 public class PathfindingState : States
 {
-
     private List<Vector3> _path;
 
     private Node startNode;
@@ -34,6 +33,11 @@ public class PathfindingState : States
         _transform = this._agent.transform;
         return this;
     }
+    public PathfindingState SetGoalNode(Node gNode) //Por si no se usa en la maquina de estados
+    {
+        goalNode = gNode;
+        return this;
+    }
 
     public PathfindingState SetLayers(LayerMask nodeMask, LayerMask obstacles)
     {
@@ -48,9 +52,12 @@ public class PathfindingState : States
     }
     #endregion
 
-    public override void OnStart()
+    public override void OnStart(params object[] parameters)
     {
-        goalNode = _agent.SetEndNode();
+        // goalNode = _agent.SetEndNode();
+
+        goalNode = (Node)parameters?[0];
+
         startNode = GetStartNode();
 
         //Hacer que node swe calcule segun la distancia entre nodos.

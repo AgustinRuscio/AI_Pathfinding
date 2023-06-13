@@ -11,7 +11,7 @@ using static UnityEngine.GraphicsBuffer;
 public abstract class AiAgent : MonoBehaviour
 {
     //----Componets
-    protected PathfindingState _pathFindingSystem = new PathfindingState();
+    protected PathfindingState _pathFindingSystem ;
     protected FiniteStateMachine _fsm = new FiniteStateMachine();
 
 

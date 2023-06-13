@@ -28,7 +28,7 @@ public class PersuitState : States
 
     #endregion
 
-    public override void OnStart()
+    public override void OnStart(params object[] parameters)
     {
         EventManager.Trigger(EventEnum.PlayerLocated, _agent.GetTarget());
     }

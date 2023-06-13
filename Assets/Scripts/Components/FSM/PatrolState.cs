@@ -58,7 +58,7 @@ public class PatrolState : States
 
     #endregion
 
-    public override void OnStart()
+    public override void OnStart(params object[] parameters)
     {
         _currentNodeIndex = _patrolAgent._nodeArrayIndex;
         _patrolAgent.ApplyForce(_patrolAgent.Seek(Waypoints()));
@@ -77,7 +77,7 @@ public class PatrolState : States
         if (Tools.InLineOfSight(_transform.position, _waypoints[_currentNodeIndex].transform.position, _nodeLayer))
             _patrolAgent.ApplyForce(_patrolAgent.Seek(Waypoints()));
         else
-            finiteStateMach.ChangeState(StatesEnum.PathFinding);
+            finiteStateMach.ChangeState(StatesEnum.PathFinding, _patrolAgent.SetEndNode());
     }
 
     private void ChangeCurrentAiWaypoint()

@@ -32,7 +32,7 @@ public class FiniteStateMachine
         if (_currentState != null) _currentState.OnStop();
         _currentState = _allStates[state];
 
-        _currentState.OnStart();
+        _currentState.OnStart(parameters);
     }
 
     public void Update() => _currentState.Update();
