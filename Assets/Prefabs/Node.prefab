@@ -111,7 +111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cost: 1
-  _neighborRadius: 8
+  _neighborRadius: 24.57
   _nodeMask:
     serializedVersion: 2
     m_Bits: 256

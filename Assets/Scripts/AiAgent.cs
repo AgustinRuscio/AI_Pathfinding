@@ -6,11 +6,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public abstract class AiAgent : MonoBehaviour
 {
     //----Componets
-    //protected Pathfinding _pathFindingSystem = new Pathfinding();
+    protected PathfindingState _pathFindingSystem = new PathfindingState();
     protected FiniteStateMachine _fsm = new FiniteStateMachine();
 
 
@@ -30,7 +31,9 @@ public abstract class AiAgent : MonoBehaviour
     protected float _waypointsViewRadius;
 
     protected Node _currentNode;
-    protected int _nodeArrayIndex;
+
+    [HideInInspector]
+    public int _nodeArrayIndex;
 
     [Header("FOV & LOS")]
     
@@ -38,16 +41,22 @@ public abstract class AiAgent : MonoBehaviour
     protected LayerMask _obstaclesMask;
     //View radius y view angle en el Flyweight
 
-    public int n = 0;
+    [SerializeField]
+    protected LayerMask _playerMask;
+
+
+    protected Transform _target;
+
 
     protected virtual void Update() => Move();
     
-
     public void Move()
     {
         transform.position += _velocity * Time.deltaTime;
         transform.forward = _velocity;
     }
+
+    public Vector3 GetTarget() => _target.position;
 
     public Vector3 Seek(Vector3 target)
     {
@@ -55,7 +64,7 @@ public abstract class AiAgent : MonoBehaviour
 
         desired.Normalize();
 
-        desired *= FlyWeightPointer.EntityStates.speed;
+        desired *= FlyWeightPointer.EnemiesAtributs.speed;
 
         return CalculateStreering(desired);
     }
@@ -71,24 +80,26 @@ public abstract class AiAgent : MonoBehaviour
     public void ApplyForce(Vector3 force)
     {
         force.y = 0;
-        _velocity = Vector3.ClampMagnitude(_velocity + force, FlyWeightPointer.EntityStates.speed);
+        _velocity = Vector3.ClampMagnitude(_velocity + force, FlyWeightPointer.EnemiesAtributs.speed);
     }
 
     public Node SetEndNode()
     {
-        int carlos = _nodeArrayIndex + 1;
+        //int carlos = _nodeArrayIndex + 1;
+        //
+        //if (carlos > _patrolNodes.Length)
+        //{
+        //    _nodeArrayIndex = 0;
+        //}
+        //
+        //Node goalNode = _patrolNodes[carlos];
+        //
+        //return goalNode;
 
-        if (carlos > _patrolNodes.Length)
-        {
-            _nodeArrayIndex = 0;
-        }
-
-        Node goalNode = _patrolNodes[carlos];
-
-        return goalNode;
+        return _patrolNodes[_nodeArrayIndex];
     }
 
-    public Node GetStartNode() => _currentNode; //Return
+    public Node GetStartNode() => _currentNode;
     
 
     public void SetCurrentNode(Node pos, int index)
@@ -106,12 +117,12 @@ public abstract class AiAgent : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, _waypointsViewRadius);
 
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EntityStates.viewRadius);
+        Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.viewRadius);
 
-        Vector3 dirA = DirFromAngel(FlyWeightPointer.EntityStates.viewAngle / 2 + transform.eulerAngles.y);
-        Vector3 dirB = DirFromAngel(-FlyWeightPointer.EntityStates.viewAngle / 2 + transform.eulerAngles.y);
+        Vector3 dirA = DirFromAngel(FlyWeightPointer.EnemiesAtributs.viewAngle / 2 + transform.eulerAngles.y);
+        Vector3 dirB = DirFromAngel(-FlyWeightPointer.EnemiesAtributs.viewAngle / 2 + transform.eulerAngles.y);
 
-        Gizmos.DrawLine(transform.position, transform.position + dirA.normalized * FlyWeightPointer.EntityStates.viewRadius);
-        Gizmos.DrawLine(transform.position, transform.position + dirB.normalized * FlyWeightPointer.EntityStates.viewRadius);
+        Gizmos.DrawLine(transform.position, transform.position + dirA.normalized * FlyWeightPointer.EnemiesAtributs.viewRadius);
+        Gizmos.DrawLine(transform.position, transform.position + dirB.normalized * FlyWeightPointer.EnemiesAtributs.viewRadius);
     }
 }

@@ -5,98 +5,125 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class EnemyModel : AiAgent
 {
-    //----Componets
-    EnemyView _enemyView = new EnemyView();
+    //------Componets
+    private EnemyView _enemyView = new EnemyView();
 
     private Animator _animator;
 
-    private List<Vector3> _path = new List<Vector3>();
+    [SerializeField]
+    private LayerMask _nodeMask;
 
-    private bool _seaching = false;
+    private bool _search;
+
+    private Vector3 _playerPos;
+
+    private List<Vector3> path = new List<Vector3>();
 
     private void Awake()
     {
+        //------Events
+        EventManager.Subscribe(EventEnum.PlayerLocated, SeachPlayer);
+
+        //------SetComponents
         _animator = GetComponent<Animator>();
+
+        _target = FindObjectOfType<PlayerModel>().gameObject.transform;
 
         _enemyView.SetAnimator(_animator);
 
-        _fsm.AddState(StatesEnum.Patrol, new PatrolState(this, _obstaclesMask).SetPatrolAgentTransform(transform).SetWayPoints(_patrolNodes, _nodeArrayIndex).SetWaypointRadius(_waypointsViewRadius));
+        //------Finite State machine States
+        _fsm.AddState(StatesEnum.Patrol, new PatrolState(this, _obstaclesMask, _playerMask).SetPatrolAgentTransform(transform).SetWayPoints(_patrolNodes, _nodeArrayIndex).SetWaypointRadius(_waypointsViewRadius));
 
-        _fsm.AddState(StatesEnum.PathFinding, new Pathfinding().SetAgent(this));
+        _fsm.AddState(StatesEnum.PathFinding, new PathfindingState().SetAgent(this).SetLayers(_nodeMask, _obstaclesMask).SetPlayerLayer(_playerMask));
+        
+        _fsm.AddState(StatesEnum.Persuit , new PersuitState().SetAgent(this).SetPlayerMask(_playerMask));
     }
 
     protected override void Update()
     {
         base.Update();
 
-        _fsm.Update();
+        //Debug.Log(_nodeArrayIndex);
 
-        //  if (!seaching && Tools.FieldOfView(transform.position, transform.forward, _currentNode.transform.position, FlyWeightPointer.EntityStates.viewRadius, FlyWeightPointer.EntityStates.viewAngle, _obstaclesMask))
-        //  {
-        //      _fsm.Update();
-        //  }
-        //  else
-        //  {
-        //       seaching = true;
-        //
-        //      int index = _nodeArrayIndex + 1;
-        //  
-        //      if(index > _patrolNodes.Length)
-        //      {
-        //          _nodeArrayIndex = 0;
-        //      }
-        //  
-        //      Node goalNode = _patrolNodes[index];
-        //  
-        //      path = _pathFindingSystem.AStar(_currentNode, goalNode);
-        //  }
-        //  
-        //   if (path.Count > 0)
-        //   {
-        //       MoveToNode();
-        //   }
-    }
-
-    
-    void MoveToNode()
-    {  
-        Vector3 target = _path[0];
-
-        ApplyForce(Seek(target));
-
-        //transform.forward = target - transform.position;
-        //transform.position += transform.forward * FlyWeightPointer.EntityStates.speed * Time.deltaTime;
-
-        if (Vector3.Distance(transform.position, target) <= 2)
+        if (!_search)
+            _fsm.Update();
+        else
         {
-            _path.RemoveAt(0);
-            if(_path.Count == 0) _seaching = false;
+            if(Tools.InLineOfSight(transform.position, _playerPos, _obstaclesMask))
+            {
+                MoveToPlayerPos();
+            }
+            else
+            {
+                path = _pathFindingSystem.AStar(GetNode(transform.position), GetNode(_playerPos));
+                Debug.Log("Search path count: " + path.Count);
+            }
+
+            while(path.Count > 0)
+            {
+                MovethroughNodes();
+            }
+
+            if (Vector3.Distance(transform.position, _playerPos) < 5)
+                _search = false;
         }
-        
+    }
+    private Node GetNode(Vector3 initPos)
+    {
+        var nearNode = Physics.OverlapSphere(transform.position, FlyWeightPointer.EnemiesAtributs.viewRadius, _nodeMask);
+
+        Node nearestNode = null;
+
+        float distance = 900000;
+
+        for (int i = 0; i < nearNode.Length; i++)
+        {
+            if (Tools.InLineOfSight(transform.position, nearNode[i].transform.position, _obstaclesMask))
+            {
+                RaycastHit hit;
+
+                Vector3 dir = nearNode[i].transform.position - transform.position;
+
+                UnityEngine.Debug.Log(nearNode[i].name);
+
+                if (Physics.Raycast(transform.position, dir, out hit))
+                {
+                    if (hit.distance < distance)
+                    {
+                        distance = hit.distance;
+                        nearestNode = nearNode[i].gameObject.GetComponent<Node>();
+                    }
+                }
+            }
+        }
+        UnityEngine.Debug.Log("El nodo mas cercano es" + nearestNode.name);
+
+        return nearestNode;
     }
 
-    #region FOV local
-    //public bool InLineOfSight(Vector3 posA, Vector3 posB)
-    //{
-    //    Vector3 dir = posB - posA;
-    //    return !Physics.Raycast(posA, dir, dir.magnitude, _obstaclesMask);
-    //}
-    //bool FOV(Vector3 targetPos)
-    //{
-    //    Vector3 dir = targetPos - transform.position;
-    //
-    //    if (dir.sqrMagnitude > FlyWeightPointer.EntityStates.viewRadius * FlyWeightPointer.EntityStates.viewRadius) return false; //sqr Magnitude es mas liviano que magnitud
-    //
-    //    if (Vector3.Angle(transform.forward, targetPos - transform.position) > FlyWeightPointer.EntityStates.viewAngle / 2) return false;
-    //
-    //    if (!InLineOfSight(transform.position, targetPos)) return false;
-    //
-    //    return true;
-    //}
-    #endregion
+    private void MovethroughNodes()
+    {
+        ApplyForce(Seek(path[0]));
+
+        if (Vector3.Distance(transform.position, path[0]) <= 2f)
+            path.RemoveAt(0);
+    }
+
+    private void SeachPlayer(params object[] parameters)
+    {
+        _search = true;
+        _playerPos = (Vector3)parameters[0];
+    }
+
+    private void MoveToPlayerPos() => ApplyForce(Seek(_playerPos));
+    
+
+    private void OnDestroy() => EventManager.Unsubscribe(EventEnum.PlayerLocated, SeachPlayer);
+    
 }

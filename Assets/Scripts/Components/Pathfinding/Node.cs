@@ -23,7 +23,7 @@ public class Node : MonoBehaviour
     private LayerMask _obstableMask;
 
 
-    public float Cost
+    public int Cost
     {
         get { return _cost; }
     }

@@ -10,7 +10,7 @@ using UnityEngine;
 
 public class FlyWeightPointer
 {
-    public static readonly FlyWeight EntityStates = new FlyWeight()
+    public static readonly FlyWeight EnemiesAtributs = new FlyWeight()
     {
         speed = 3,
         viewAngle = 90,

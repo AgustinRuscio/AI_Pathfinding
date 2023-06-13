@@ -6,7 +6,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
+using static UnityEngine.GraphicsBuffer;
+
 
 public class PatrolState : States
 {
@@ -21,12 +22,15 @@ public class PatrolState : States
     private AiAgent _patrolAgent;
 
     private Vector3 _currentWaypointPos;
-    LayerMask _layerMask;
 
-    public PatrolState(AiAgent enemy, LayerMask a)
+    LayerMask _nodeLayer;
+    LayerMask _playerLayer;
+
+    public PatrolState(AiAgent enemy, LayerMask nodeLayer, LayerMask playerMask)
     {
         _patrolAgent = enemy;
-        _layerMask = a;
+        _nodeLayer = nodeLayer;
+        _playerLayer = playerMask;
     }
 
     #region Builder
@@ -56,19 +60,21 @@ public class PatrolState : States
 
     public override void OnStart()
     {
-        _currentNodeIndex = 0;
+        _currentNodeIndex = _patrolAgent._nodeArrayIndex;
         _patrolAgent.ApplyForce(_patrolAgent.Seek(Waypoints()));
 
-
-        _patrolAgent.n++;
-        Debug.Log("Entro al patrol" + _patrolAgent.n);
         ChangeCurrentAiWaypoint();
     }
 
 
     public override void Update()
     {
-        if (Tools.FieldOfView(_transform.position, _transform.forward, _waypoints[_currentNodeIndex].transform.position, FlyWeightPointer.EntityStates.viewRadius, FlyWeightPointer.EntityStates.viewAngle, _layerMask))
+        if (Tools.FieldOfView(_patrolAgent.transform.position, _patrolAgent.transform.forward, _patrolAgent.GetTarget(), FlyWeightPointer.EnemiesAtributs.viewRadius, FlyWeightPointer.EnemiesAtributs.viewAngle, _playerLayer))
+            finiteStateMach.ChangeState(StatesEnum.Persuit);
+
+        UnityEngine.Debug.Log("Estoy en patrol");
+
+        if (Tools.InLineOfSight(_transform.position, _waypoints[_currentNodeIndex].transform.position, _nodeLayer))
             _patrolAgent.ApplyForce(_patrolAgent.Seek(Waypoints()));
         else
             finiteStateMach.ChangeState(StatesEnum.PathFinding);
@@ -95,9 +101,6 @@ public class PatrolState : States
 
     public override void OnStop() 
     {
-        _patrolAgent.n++;
-        Debug.Log("salgo al patrol" + _patrolAgent.n);
-
         _currentNodeIndex = 0;
         _patrolAgent.SetEndNode();
     }
