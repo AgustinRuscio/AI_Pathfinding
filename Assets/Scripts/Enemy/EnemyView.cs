@@ -16,4 +16,7 @@ public class EnemyView
         _animator = animator;
         return this;
     }
+
+    public void Punch() => _animator.SetTrigger("Punch");
+    
 }

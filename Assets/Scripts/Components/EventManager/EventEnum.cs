@@ -7,5 +7,7 @@ public enum EventEnum
     Pause,
     Resume,
     BackToMenue,
-    PlayerLocated
+    PlayerLocated,
+    GameOver,
+    Retry
 }

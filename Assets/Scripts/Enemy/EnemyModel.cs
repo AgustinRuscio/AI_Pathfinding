@@ -23,6 +23,8 @@ public class EnemyModel : AiAgent
 
     private List<Vector3> path = new List<Vector3>();
 
+    [SerializeField]
+    private Collider _punchZone;
 
     private void Awake()
     {
@@ -82,7 +84,7 @@ public class EnemyModel : AiAgent
        
            }
        
-           if (Vector3.Distance(transform.position, _playerPos) < 5)
+           if (Vector3.Distance(transform.position, _playerPos) < FlyWeightPointer.EnemiesAtributs.playerDistance)
                _search = false;
        }
     }
@@ -123,7 +125,7 @@ public class EnemyModel : AiAgent
     {
         ApplyForce(Seek(path[0]));
 
-        if (Vector3.Distance(transform.position, path[0]) <= 2f)
+        if (Vector3.Distance(transform.position, path[0]) <= FlyWeightPointer.EnemiesAtributs.viewRadius)
             path.RemoveAt(0);
     }
 
@@ -131,6 +133,21 @@ public class EnemyModel : AiAgent
     {
         _search = true;
         _playerPos = (Vector3)parameters[0];
+    }
+
+    private void PuchLogic()
+    {
+        _enemyView.Punch();
+    }
+
+    private void ActivatePunch()
+    {
+        _punchZone.gameObject.SetActive(true);
+    }
+
+    private void DeactivatePunch()
+    {
+        _punchZone.gameObject.SetActive(false);
     }
 
     private void MoveToPlayerPos() => ApplyForce(Seek(_playerPos));

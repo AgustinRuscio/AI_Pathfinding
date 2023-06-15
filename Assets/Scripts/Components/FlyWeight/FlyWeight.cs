@@ -13,4 +13,6 @@ public class FlyWeight
     public float viewAngle;
     public float viewRadius;
     public float waypointRadius;
+    public float nodeDistance;
+    public float playerDistance;
 }

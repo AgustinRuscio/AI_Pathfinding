@@ -40,9 +40,11 @@ public class PersuitState : States
 
     public override void Update()
     {
+        if (Vector3.Distance(_agent.GetTarget(), _agent.transform.position) < 3) { }
+
         if (Tools.FieldOfView(_agent.transform.position, _agent.transform.forward, _agent.GetTarget(), FlyWeightPointer.EnemiesAtributs.viewRadius, FlyWeightPointer.EnemiesAtributs.viewAngle, _playerMask))
         {
-            EventManager.Trigger(EventEnum.PlayerLocated, _agent.GetTarget());
+            //EventManager.Trigger(EventEnum.PlayerLocated, _agent.GetTarget());
             _agent.ApplyForce(_agent.Seek(_agent.GetTarget()));
         }
         else

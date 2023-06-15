@@ -4,6 +4,7 @@
 
 
 using System;
+using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -21,6 +22,8 @@ public class PlayerModel : MonoBehaviour
     [SerializeField]
     private float _speed;
 
+    private int _life = 3;
+
     [SerializeField]
     private float _jumpforce;
 
@@ -28,8 +31,12 @@ public class PlayerModel : MonoBehaviour
     private Vector3 _animDirecton;
 
     event Action OnJump;
+    event Action OnPuch;
+
     event Action<float, float> OnMovement;
 
+    [SerializeField]
+    private TextMeshProUGUI _lifeTex;
 
     private void Awake()
     {
@@ -46,6 +53,10 @@ public class PlayerModel : MonoBehaviour
         OnJump += _playerView.OnJump;
 
         OnMovement += _playerView.OnMove;
+
+        OnPuch += _playerView.OnPuch;
+
+        UpdateHud();
     }
 
     private void Update()
@@ -79,6 +90,43 @@ public class PlayerModel : MonoBehaviour
         _rigidbody.AddForce(_moveDirection, ForceMode.Acceleration);
         //_rigidbody.velocity = new Vector3(_moveDirection.x, _rigidbody.velocity.y, _moveDirection.z) ;
     }
+
+    public void TakeDamage()
+    {
+        OnPuch();
+
+        _life--;
+        UpdateHud();
+
+        if (_life <= 0)
+            GameOver();
+    }
+
+    private void UpdateHud()
+    {
+        switch (_life)
+        {
+
+            case 0:
+                _lifeTex.text = "Death";
+                break;
+
+            case 1:
+                _lifeTex.text = "Run for your life";
+                break;
+
+            case 2:
+                _lifeTex.text = "Carefull";
+                break;
+
+            case 3:
+                _lifeTex.text = "You are fine";
+                break;
+        }
+    }
+
+    private void GameOver() => EventManager.Trigger(EventEnum.GameOver);
+    
 
     private bool CheckFloor() => Physics.Raycast(transform.position, Vector3.down, 1.2f);
     

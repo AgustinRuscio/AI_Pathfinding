@@ -122,5 +122,11 @@ public abstract class AiAgent : MonoBehaviour
 
         Gizmos.DrawLine(transform.position, transform.position + dirA.normalized * FlyWeightPointer.EnemiesAtributs.viewRadius);
         Gizmos.DrawLine(transform.position, transform.position + dirB.normalized * FlyWeightPointer.EnemiesAtributs.viewRadius);
+       
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.playerDistance);
+
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.nodeDistance);
     }
 }

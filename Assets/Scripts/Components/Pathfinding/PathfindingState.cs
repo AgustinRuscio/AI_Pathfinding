@@ -125,7 +125,7 @@ public class PathfindingState : States
     {
         _agent.ApplyForce(_agent.Seek(_path[0]));
 
-        if (Vector3.Distance(_agent.transform.position, _path[0]) <= 2f)
+        if (Vector3.Distance(_agent.transform.position, _path[0]) <= FlyWeightPointer.EnemiesAtributs.nodeDistance)
         {
             _path.RemoveAt(0);
         }

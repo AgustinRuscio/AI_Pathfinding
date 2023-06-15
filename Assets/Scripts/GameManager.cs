@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject _pauseMenu;
 
+    [SerializeField]
+    private GameObject _gameOver;
+
     const string menuName = "Menue";
 
     private void Awake()
@@ -29,6 +32,8 @@ public class GameManager : MonoBehaviour
         EventManager.Subscribe(EventEnum.Pause, Pause);
         EventManager.Subscribe(EventEnum.Resume, Resume);
         EventManager.Subscribe(EventEnum.BackToMenue, BacktoMenue);
+        EventManager.Subscribe(EventEnum.Retry, Retry);
+        EventManager.Subscribe(EventEnum.GameOver, GameOver);
     }
 
 
@@ -57,10 +62,26 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+    private void GameOver(params object[] parameters)
+    {
+        Time.timeScale = 0f;
+        _gameOver.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    private void Retry(params object[] parameters)
+    {
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     private void OnDestroy()
     {
         EventManager.Unsubscribe(EventEnum.Pause, Pause);
         EventManager.Unsubscribe(EventEnum.Resume, Resume);
         EventManager.Unsubscribe(EventEnum.BackToMenue, BacktoMenue);
+        EventManager.Unsubscribe(EventEnum.Retry, Retry);
+        EventManager.Unsubscribe(EventEnum.GameOver, GameOver);
     }
 }

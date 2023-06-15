@@ -16,5 +16,7 @@ public class FlyWeightPointer
         viewAngle = 90,
         viewRadius = 13,
         waypointRadius = 1,
+        nodeDistance = 2,
+        playerDistance = 3,
     };
 }

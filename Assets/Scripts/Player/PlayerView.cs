@@ -23,5 +23,8 @@ public class PlayerView
         _animator.SetFloat("z", z);
     }
 
+
+    public void OnPuch() => _animator.SetTrigger("TakePunch");
+
     public void OnJump() => _animator.SetTrigger("Jump");
 }
