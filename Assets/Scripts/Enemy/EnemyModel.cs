@@ -3,11 +3,9 @@
 //--------------------------------------------
 
 
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class EnemyModel : AiAgent
 {
@@ -25,6 +23,7 @@ public class EnemyModel : AiAgent
 
     private List<Vector3> path = new List<Vector3>();
 
+
     private void Awake()
     {
         //------Events
@@ -40,49 +39,52 @@ public class EnemyModel : AiAgent
         _pathFindingSystem = new PathfindingState().SetAgent(this).SetLayers(_nodeMask, _obstaclesMask).SetPlayerLayer(_playerMask);
 
         //------Finite State machine States
-        _fsm.AddState(StatesEnum.Patrol, new PatrolState(this, _obstaclesMask, _playerMask).SetPatrolAgentTransform(transform).SetWayPoints(_patrolNodes, _nodeArrayIndex).SetWaypointRadius(_waypointsViewRadius));
+        _fsm.AddState(StatesEnum.Patrol, new PatrolState(this, _obstaclesMask, _playerMask).SetPatrolAgentTransform(transform).SetWayPoints(_patrolNodes, _nodeArrayIndex).SetWaypointRadius(FlyWeightPointer.EnemiesAtributs.waypointRadius));
 
         _fsm.AddState(StatesEnum.PathFinding, new PathfindingState().SetAgent(this).SetLayers(_nodeMask, _obstaclesMask).SetPlayerLayer(_playerMask));
         
-        _fsm.AddState(StatesEnum.Persuit , new PersuitState().SetAgent(this).SetPlayerMask(_playerMask));
+        _fsm.AddState(StatesEnum.Persuit , new PersuitState(this).SetAgent(this).SetPlayerMask(_playerMask));
+
+        _fsm.AddState(StatesEnum.GoToLocation, new GoToLocationState(transform, _obstaclesMask));
     }
 
     protected override void Update()
     {
         base.Update();
 
-        //Debug.Log(_nodeArrayIndex);
-
-        if (!_search)
-            _fsm.Update();
-        else
-        {
-            if(Tools.InLineOfSight(transform.position, _playerPos, _obstaclesMask))
-            {
-                MoveToPlayerPos();
-            }
-            else
-            {
-                //_pathFindingSystem.SetGoalNode(GetNode(_playerPos));
-                Node start = GetNode(transform.position);
-                Node end = GetNode(_playerPos);
-
-                Debug.Log(this.name + " " + "Start " + start.name + " " + start);
-                Debug.Log(this.name + " " + "Goal " + end.name + " " + end);
-
-                path = _pathFindingSystem.AStar(start, end);
-
-                Debug.Log("Search path count: " + path.Count);
-                Debug.Log(this.name + " " + "Search path count: " + path.Count);
-            }
-
-            
-            if(path.Count> 0)
-                MovethroughNodes();
-
-            if (Vector3.Distance(transform.position, _playerPos) < 5)
-                _search = false;
-        }
+        
+       if (!_search)
+        _fsm.Update();
+       else //Pasar a un estado -> Esta en GoToLocation pero no lo puedo hacer andar
+       {
+           if(Tools.InLineOfSight(transform.position, _playerPos, _obstaclesMask))
+           {
+               MoveToPlayerPos();
+           }
+           else
+           {
+               if (path.Count > 0)
+                   MovethroughNodes();
+               else
+               {
+                   //_pathFindingSystem.SetGoalNode(GetNode(_playerPos));
+                   Node start = GetNode(transform.position);
+                   Node end = GetNode(_playerPos);
+       
+                   Debug.Log(this.name + " " + "Start " + start.name + " " + start);
+                   Debug.Log(this.name + " " + "Goal " + end.name + " " + end);
+       
+                   path = _pathFindingSystem.AStar(start, end);
+       
+                   Debug.Log("Search path count: " + path.Count);
+                   Debug.Log(this.name + " " + "Search path count: " + path.Count);
+               }
+       
+           }
+       
+           if (Vector3.Distance(transform.position, _playerPos) < 5)
+               _search = false;
+       }
     }
     private Node GetNode(Vector3 initPos)
     {
@@ -133,66 +135,6 @@ public class EnemyModel : AiAgent
 
     private void MoveToPlayerPos() => ApplyForce(Seek(_playerPos));
 
-   /* public List<Vector3> AStar(Node startingNode, Node endNode)
-    {
-        if (startingNode == null || endNode == null) return new List<Vector3>();
-
-        PriorityQueue<Node> frontier = new PriorityQueue<Node>();
-
-        frontier.Enqueue(startingNode, 0);
-
-        Dictionary<Node, Node> cameFrom = new Dictionary<Node, Node>();
-        cameFrom.Add(startingNode, null);
-
-        Dictionary<Node, int> costSoFar = new Dictionary<Node, int>();
-        costSoFar.Add(startingNode, 0);
-
-        Node current = null;
-
-        while (frontier.Count != 0)
-        {
-            current = frontier.Dequeue();
-
-            if (current == endNode) break;
-
-            foreach (var next in current.GetNeighbors())
-            {
-                int newCost = costSoFar[current] + next.Cost;
-
-                if (!costSoFar.ContainsKey(next))
-                {
-                    frontier.Enqueue(next, newCost + Heuristic(next, endNode));
-                    costSoFar.Add(next, newCost);
-                    cameFrom.Add(next, current);
-                }
-                else if (newCost < costSoFar[current])
-                {
-                    frontier.Enqueue(next, newCost + Heuristic(next, endNode));
-                    costSoFar[next] = newCost;
-                    cameFrom[next] = current;
-                }
-            }
-        }
-
-        if (current != endNode) return new List<Vector3>();
-
-        List<Vector3> path = new List<Vector3>();
-
-        while (current != startingNode)
-        {
-            path.Add(current.transform.position);
-            current = cameFrom[current];
-        }
-
-        path.Add(startingNode.transform.position);
-
-        return path;
-    }
-
-    private float Heuristic(Node start, Node End)
-    {
-        return (End.transform.position - start.transform.position).sqrMagnitude;
-    }*/
     private void OnDestroy() => EventManager.Unsubscribe(EventEnum.PlayerLocated, SeachPlayer);
     
 }

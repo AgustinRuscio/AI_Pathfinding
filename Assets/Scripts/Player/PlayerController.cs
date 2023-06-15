@@ -14,7 +14,7 @@ public class PlayerController
 
     event Action OnPlay;
 
-    public PlayerController SetPlayerMode(PlayerModel playerModel)
+    public PlayerController SetPlayerModel(PlayerModel playerModel)
     {
         _playerModel = playerModel;
         return this;
@@ -29,7 +29,7 @@ public class PlayerController
         OnPlay += MovementController;
     }
 
-    private void DeleteMovement() => OnPlay = null;
+    private void DeleteMovement() => OnPlay = delegate { };
     
 
     public void ArtificialUpdate()

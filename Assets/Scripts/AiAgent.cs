@@ -3,10 +3,8 @@
 //--------------------------------------------
 
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
+using System;
 
 public abstract class AiAgent : MonoBehaviour
 {
@@ -27,9 +25,6 @@ public abstract class AiAgent : MonoBehaviour
     [SerializeField]
     protected Node[] _patrolNodes;
 
-    [SerializeField]
-    protected float _waypointsViewRadius;
-
     protected Node _currentNode;
 
     [HideInInspector]
@@ -44,9 +39,9 @@ public abstract class AiAgent : MonoBehaviour
     [SerializeField]
     protected LayerMask _playerMask;
 
-
     protected Transform _target;
 
+    public event Action StatesDestructor;
 
     protected virtual void Update() => Move();
     
@@ -109,12 +104,15 @@ public abstract class AiAgent : MonoBehaviour
     }
 
     Vector3 DirFromAngel(float angleInDegrees) => new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
+
+
+    private void OnDestroy() => StatesDestructor?.Invoke();
     
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _waypointsViewRadius);
+        Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.waypointRadius);
 
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.viewRadius);

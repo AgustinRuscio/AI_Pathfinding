@@ -4,9 +4,6 @@
 
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -14,8 +11,6 @@ using UnityEngine;
 public class PlayerModel : MonoBehaviour
 {
     [Header("Components")]
-    
-    private PlayerView _playerView = new PlayerView(); 
     private PlayerController _playerContoller = new PlayerController();
 
     private Rigidbody _rigidbody;
@@ -29,10 +24,11 @@ public class PlayerModel : MonoBehaviour
     [SerializeField]
     private float _jumpforce;
 
-    [SerializeField]
     private Vector3 _moveDirection;
+    private Vector3 _animDirecton;
 
     event Action OnJump;
+    event Action<float, float> OnMovement;
 
 
     private void Awake()
@@ -40,18 +36,23 @@ public class PlayerModel : MonoBehaviour
         _animator = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
 
-        _playerContoller.SetPlayerMode(this);
+
+        PlayerView _playerView = new PlayerView();
         _playerView.SetAnimator(_animator);
+        
+        _playerContoller.SetPlayerModel(this);
 
         OnJump += JumpLogic;
         OnJump += _playerView.OnJump;
+
+        OnMovement += _playerView.OnMove;
     }
 
     private void Update()
     {
         _playerContoller.ArtificialUpdate();
-        _playerView.OnMove(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
+        OnMovement?.Invoke(_animDirecton.x, _animDirecton.z);
 
         if(_moveDirection == Vector3.zero)
             StopMovement();
@@ -67,13 +68,16 @@ public class PlayerModel : MonoBehaviour
 
     public void Move(Vector3 dir)
     {
+        _animDirecton = dir;
+
         _moveDirection = dir.x * transform.right;
         _moveDirection += dir.z * transform.forward;
 
-        _moveDirection *= _speed;
         _moveDirection.Normalize();
+        _moveDirection *= _speed;
 
         _rigidbody.AddForce(_moveDirection, ForceMode.Acceleration);
+        //_rigidbody.velocity = new Vector3(_moveDirection.x, _rigidbody.velocity.y, _moveDirection.z) ;
     }
 
     private bool CheckFloor() => Physics.Raycast(transform.position, Vector3.down, 1.2f);

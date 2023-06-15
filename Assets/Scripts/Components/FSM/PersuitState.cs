@@ -3,8 +3,6 @@
 //--------------------------------------------
 
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PersuitState : States
@@ -13,11 +11,16 @@ public class PersuitState : States
 
     private LayerMask _playerMask;
 
+    public PersuitState(AiAgent a)
+    {
+        _agent = a;
+    }
+
     #region Builder
 
     public PersuitState SetAgent(AiAgent agent)
     {
-        _agent = agent;
+        //_agent = agent;
         return this;
     }
     public PersuitState SetPlayerMask(LayerMask playerMask)
@@ -30,6 +33,8 @@ public class PersuitState : States
 
     public override void OnStart(params object[] parameters)
     {
+        Debug.Log(_agent.name + "Estoy en Persuit");
+
         EventManager.Trigger(EventEnum.PlayerLocated, _agent.GetTarget());
     }
 

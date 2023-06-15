@@ -3,10 +3,7 @@
 //--------------------------------------------
 
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 
 public class PatrolState : States
@@ -21,16 +18,18 @@ public class PatrolState : States
 
     private AiAgent _patrolAgent;
 
-    private Vector3 _currentWaypointPos;
-
     LayerMask _nodeLayer;
     LayerMask _playerLayer;
 
     public PatrolState(AiAgent enemy, LayerMask nodeLayer, LayerMask playerMask)
     {
+        //EventManager.Subscribe(EventEnum.PlayerLocated, PlayerLocated);
+
         _patrolAgent = enemy;
         _nodeLayer = nodeLayer;
         _playerLayer = playerMask;
+
+        _patrolAgent.StatesDestructor += UnSuscribeEvents;
     }
 
     #region Builder
@@ -72,12 +71,12 @@ public class PatrolState : States
         if (Tools.FieldOfView(_patrolAgent.transform.position, _patrolAgent.transform.forward, _patrolAgent.GetTarget(), FlyWeightPointer.EnemiesAtributs.viewRadius, FlyWeightPointer.EnemiesAtributs.viewAngle, _playerLayer))
             finiteStateMach.ChangeState(StatesEnum.Persuit);
 
-        UnityEngine.Debug.Log("Estoy en patrol");
+        Debug.Log("Estoy en patrol");
 
         if (Tools.InLineOfSight(_transform.position, _waypoints[_currentNodeIndex].transform.position, _nodeLayer))
             _patrolAgent.ApplyForce(_patrolAgent.Seek(Waypoints()));
         else
-            finiteStateMach.ChangeState(StatesEnum.PathFinding, _patrolAgent.SetEndNode());
+            finiteStateMach.ChangeState(StatesEnum.PathFinding, _patrolAgent.SetEndNode(), false);
     }
 
     private void ChangeCurrentAiWaypoint()
@@ -99,9 +98,16 @@ public class PatrolState : States
         return _waypoints[_currentNodeIndex].transform.position;
     }
 
+
+    private void PlayerLocated(params object[] parameters) => finiteStateMach.ChangeState(StatesEnum.GoToLocation, (Vector3)parameters[0]);
+    
+
     public override void OnStop() 
     {
         _currentNodeIndex = 0;
         _patrolAgent.SetEndNode();
     }
+
+    private void UnSuscribeEvents() => EventManager.Unsubscribe(EventEnum.PlayerLocated, PlayerLocated);
+    
 }

@@ -4,9 +4,6 @@
 
 
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PathfindingState : States
@@ -18,19 +15,21 @@ public class PathfindingState : States
 
     private AiAgent _agent;
 
-    private Transform _transform;
-
     private LayerMask _nodeLayer;
 
     private LayerMask _playerLayer;
     private LayerMask _obstacleMask;
+
+    //public PathfindingState() => EventManager.Subscribe(EventEnum.PlayerLocated, PlayerLocated);
+    
 
     #region Builder
 
     public PathfindingState SetAgent(AiAgent agent)
     {
         this._agent = agent;
-        _transform = this._agent.transform;
+        _agent.StatesDestructor += UnSuscribeEvents;
+
         return this;
     }
     public PathfindingState SetGoalNode(Node gNode) //Por si no se usa en la maquina de estados
@@ -56,27 +55,29 @@ public class PathfindingState : States
     {
         // goalNode = _agent.SetEndNode();
 
-        goalNode = (Node)parameters?[0];
+       
+        goalNode = !(bool)parameters[1] ? (Node)parameters[0] : GetNode((Vector3)parameters[0]);
 
-        startNode = GetStartNode();
+
+        startNode = GetNode(_agent.transform.position);
 
         //Hacer que node swe calcule segun la distancia entre nodos.
         //Overlap sphere o conseguir todos en el start
         //El indice es siemopre el goal
-        UnityEngine.Debug.Log("Start node: " + startNode.name + "  "+ startNode.transform.position);
-        UnityEngine.Debug.Log("Goal node: " + goalNode.name + "  "+ goalNode.transform.position);
-        UnityEngine.Debug.Log("hago pathfinding");
+        //Debug.Log("Start node: " + startNode.name + "  "+ startNode.transform.position);
+        //Debug.Log("Goal node: " + goalNode.name + "  "+ goalNode.transform.position);
+        //Debug.Log("hago pathfinding");
 
         _path = AStar(startNode, goalNode);
 
         _path.Reverse();
 
-        UnityEngine.Debug.Log("path.count: " + _path.Count);
+       // Debug.Log("path.count: " + _path.Count);
     }
 
-    public Node GetStartNode()
+    public Node GetNode(Vector3 initPos)
     {
-        var nearNode = Physics.OverlapSphere(_agent.transform.position, FlyWeightPointer.EnemiesAtributs.viewRadius, _nodeLayer);
+        var nearNode = Physics.OverlapSphere(initPos, FlyWeightPointer.EnemiesAtributs.viewRadius, _nodeLayer);
 
         Node nearestNode = null;
 
@@ -84,15 +85,14 @@ public class PathfindingState : States
 
         for (int i = 0; i < nearNode.Length; i++)
         {
-            if (Tools.InLineOfSight(_agent.transform.position, nearNode[i].transform.position, _obstacleMask))
+            if (Tools.InLineOfSight(initPos, nearNode[i].transform.position, _obstacleMask))
             {
                 RaycastHit hit;
 
-                Vector3 dir = nearNode[i].transform.position - _agent.transform.position;
+                Vector3 dir = nearNode[i].transform.position - initPos;
 
-                //UnityEngine.Debug.Log(nearNode[i].name);
 
-                if (Physics.Raycast(_agent.transform.position, dir, out hit))
+                if (Physics.Raycast(initPos, dir, out hit))
                 {
                     if (hit.distance < distance)
                     {
@@ -102,7 +102,6 @@ public class PathfindingState : States
                 }
             }
         }
-        //UnityEngine.Debug.Log( "El nodo mas cercano es"+ nearestNode.name);
 
         return nearestNode;
     }
@@ -112,7 +111,7 @@ public class PathfindingState : States
         if (Tools.FieldOfView(_agent.transform.position, _agent.transform.forward, _agent.GetTarget(), FlyWeightPointer.EnemiesAtributs.viewRadius, FlyWeightPointer.EnemiesAtributs.viewAngle, _playerLayer))
             finiteStateMach.ChangeState(StatesEnum.Persuit);
 
-        UnityEngine.Debug.Log("Estoy en pathfinding");
+        Debug.Log("Estoy en pathfinding");
 
 
         if (Tools.InLineOfSight(_agent.transform.position, goalNode.transform.position, _obstacleMask))
@@ -131,8 +130,13 @@ public class PathfindingState : States
             _path.RemoveAt(0);
         }
     }
-    public override void OnStop() { }
-    
+
+    private void PlayerLocated(params object[] parameters)
+    {
+        Debug.Log("Parameter pos: "+ (Vector3)parameters[0]);
+        finiteStateMach.ChangeState(StatesEnum.GoToLocation, (Vector3)parameters[0]);
+
+    }
     public List<Vector3> AStar(Node startingNode, Node endNode)
     {
         if(startingNode == null || endNode == null) return new List<Vector3>();
@@ -193,4 +197,8 @@ public class PathfindingState : States
     {
         return (End.transform.position - start.transform.position).sqrMagnitude;
     }
+
+    private void UnSuscribeEvents() => EventManager.Unsubscribe(EventEnum.PlayerLocated, PlayerLocated);
+
+    public override void OnStop() { }
 }
