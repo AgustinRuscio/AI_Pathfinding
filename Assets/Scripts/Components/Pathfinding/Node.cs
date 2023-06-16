@@ -3,9 +3,7 @@
 //--------------------------------------------
 
 
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Node : MonoBehaviour
@@ -23,10 +21,7 @@ public class Node : MonoBehaviour
     private LayerMask _obstableMask;
 
 
-    public int Cost
-    {
-        get { return _cost; }
-    }
+    public int Cost { get { return _cost; }}
 
 
     public List<Node> GetNeighbors()

@@ -3,13 +3,12 @@
 //--------------------------------------------
 
 
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class FiniteStateMachine
 {
     private States _currentState;
+    private StatesEnum _currentStateEnum;
 
     private Dictionary<StatesEnum, States> _allStates = new Dictionary<StatesEnum, States>();
 
@@ -21,7 +20,10 @@ public class FiniteStateMachine
         _allStates.Add(key, state);
 
         if (_currentState == null)
+        {
             ChangeState(key);
+            _currentStateEnum = key;
+        }
 
         state.finiteStateMach = this;
     }
@@ -30,10 +32,14 @@ public class FiniteStateMachine
         if (!_allStates.ContainsKey(state)) return;
 
         if (_currentState != null) _currentState.OnStop();
-        _currentState = _allStates[state];
+        {
+            _currentState = _allStates[state];
+            _currentStateEnum = state;
+        }
 
         _currentState.OnStart(parameters);
     }
 
+    public StatesEnum CurrentState() => _currentStateEnum;
     public void Update() => _currentState.Update();
 }

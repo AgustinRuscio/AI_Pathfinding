@@ -20,9 +20,6 @@ public class PathfindingState : States
     private LayerMask _playerLayer;
     private LayerMask _obstacleMask;
 
-    //public PathfindingState() => EventManager.Subscribe(EventEnum.PlayerLocated, PlayerLocated);
-    
-
     #region Builder
 
     public PathfindingState SetAgent(AiAgent agent)
@@ -53,26 +50,17 @@ public class PathfindingState : States
 
     public override void OnStart(params object[] parameters)
     {
-        // goalNode = _agent.SetEndNode();
-
-       
         goalNode = !(bool)parameters[1] ? (Node)parameters[0] : GetNode((Vector3)parameters[0]);
-
 
         startNode = GetNode(_agent.transform.position);
 
         //Hacer que node swe calcule segun la distancia entre nodos.
         //Overlap sphere o conseguir todos en el start
         //El indice es siemopre el goal
-        //Debug.Log("Start node: " + startNode.name + "  "+ startNode.transform.position);
-        //Debug.Log("Goal node: " + goalNode.name + "  "+ goalNode.transform.position);
-        //Debug.Log("hago pathfinding");
 
         _path = AStar(startNode, goalNode);
 
         _path.Reverse();
-
-       // Debug.Log("path.count: " + _path.Count);
     }
 
     public Node GetNode(Vector3 initPos)
@@ -126,17 +114,15 @@ public class PathfindingState : States
         _agent.ApplyForce(_agent.Seek(_path[0]));
 
         if (Vector3.Distance(_agent.transform.position, _path[0]) <= FlyWeightPointer.EnemiesAtributs.nodeDistance)
-        {
             _path.RemoveAt(0);
-        }
     }
 
     private void PlayerLocated(params object[] parameters)
     {
         Debug.Log("Parameter pos: "+ (Vector3)parameters[0]);
         finiteStateMach.ChangeState(StatesEnum.GoToLocation, (Vector3)parameters[0]);
-
     }
+
     public List<Vector3> AStar(Node startingNode, Node endNode)
     {
         if(startingNode == null || endNode == null) return new List<Vector3>();
@@ -193,10 +179,8 @@ public class PathfindingState : States
         return path;
     }
 
-    private float Heuristic(Node start, Node End)
-    {
-        return (End.transform.position - start.transform.position).sqrMagnitude;
-    }
+    private float Heuristic(Node start, Node End) => (End.transform.position - start.transform.position).sqrMagnitude;
+    
 
     private void UnSuscribeEvents() => EventManager.Unsubscribe(EventEnum.PlayerLocated, PlayerLocated);
 

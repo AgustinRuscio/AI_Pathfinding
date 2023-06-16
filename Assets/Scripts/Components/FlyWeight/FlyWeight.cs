@@ -3,9 +3,6 @@
 //--------------------------------------------
 
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class FlyWeight 
 {
@@ -15,4 +12,5 @@ public class FlyWeight
     public float waypointRadius;
     public float nodeDistance;
     public float playerDistance;
+    public float punchCoolDown;
 }

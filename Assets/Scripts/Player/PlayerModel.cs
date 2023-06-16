@@ -7,11 +7,10 @@ using System;
 using TMPro;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody))] [RequireComponent(typeof(Animator))]
 public class PlayerModel : MonoBehaviour
 {
-    [Header("Components")]
+    //------Components
     private PlayerController _playerContoller = new PlayerController();
 
     private Rigidbody _rigidbody;
@@ -24,19 +23,27 @@ public class PlayerModel : MonoBehaviour
 
     private int _life = 3;
 
+    private int _chains;
+    private int _chainsNeeded = 5;
+
     [SerializeField]
     private float _jumpforce;
 
     private Vector3 _moveDirection;
     private Vector3 _animDirecton;
 
-    event Action OnJump;
-    event Action OnPuch;
+    private event Action OnJump;
+    private event Action OnPuch;
 
-    event Action<float, float> OnMovement;
+    private event Action<float, float> OnMovement;
 
+
+    [Header("Canvas Atributs")]
     [SerializeField]
     private TextMeshProUGUI _lifeTex;
+
+    [SerializeField]
+    private TextMeshProUGUI _chainsTex;
 
     private void Awake()
     {
@@ -91,6 +98,16 @@ public class PlayerModel : MonoBehaviour
         //_rigidbody.velocity = new Vector3(_moveDirection.x, _rigidbody.velocity.y, _moveDirection.z) ;
     }
 
+    public void TakeChain()
+    {
+        _chains++;
+
+        UpdateHud();
+
+        if (_chains >= _chainsNeeded)
+            EventManager.Trigger(EventEnum.WinCondition);
+    }
+
     public void TakeDamage()
     {
         OnPuch();
@@ -123,6 +140,8 @@ public class PlayerModel : MonoBehaviour
                 _lifeTex.text = "You are fine";
                 break;
         }
+
+        _chainsTex.text = _chains.ToString();
     }
 
     private void GameOver() => EventManager.Trigger(EventEnum.GameOver);

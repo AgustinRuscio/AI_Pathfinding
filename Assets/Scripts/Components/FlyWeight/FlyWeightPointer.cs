@@ -3,10 +3,6 @@
 //--------------------------------------------
 
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class FlyWeightPointer
 {
@@ -18,5 +14,6 @@ public class FlyWeightPointer
         waypointRadius = 1,
         nodeDistance = 2,
         playerDistance = 3,
+        punchCoolDown = 3,
     };
 }

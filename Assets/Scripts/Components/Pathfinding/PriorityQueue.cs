@@ -9,10 +9,7 @@ public class PriorityQueue <T>
 {
     private Dictionary<T, float> _allElement = new Dictionary<T, float>();
 
-    public float Count
-    {
-        get { return _allElement.Count;}
-    }
+    public float Count { get { return _allElement.Count;} }
 
     public void Enqueue (T elemnt, float cost)
     {

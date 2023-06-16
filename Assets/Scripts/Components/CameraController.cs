@@ -3,8 +3,6 @@
 //--------------------------------------------
 
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -32,12 +30,14 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private float sensitivity;
 
-    private bool _onPause;
+    private bool _cantMove;
 
     private void Awake()
     {
         EventManager.Subscribe(EventEnum.Pause, SetOnPause);
         EventManager.Subscribe(EventEnum.Resume, SetOnPause);
+        EventManager.Subscribe(EventEnum.GameOver, SetGameOver);
+        EventManager.Subscribe(EventEnum.WinCondition, SetGameOver);
 
         camera = GetComponent<Camera>();
 
@@ -49,17 +49,18 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        if(!_onPause)
+        if(!_cantMove)
             PlayerRotationWithMouse();
     }
 
     void LateUpdate()
     {
-        if(!_onPause)
+        if(!_cantMove)
             CameraMovement();
     }
 
-    private void SetOnPause(params object[] isPaused) => _onPause = (bool)isPaused[0];
+    private void SetOnPause(params object[] isPaused) => _cantMove = (bool)isPaused[0];
+    private void SetGameOver(params object[] isPaused) => _cantMove = true;
     
 
     private void PlayerRotationWithMouse()
@@ -135,5 +136,7 @@ public class CameraController : MonoBehaviour
     {
         EventManager.Unsubscribe(EventEnum.Pause, SetOnPause);
         EventManager.Unsubscribe(EventEnum.Resume, SetOnPause);
+        EventManager.Unsubscribe(EventEnum.GameOver, SetGameOver);
+        EventManager.Unsubscribe(EventEnum.WinCondition, SetGameOver);
     }
 }

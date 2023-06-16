@@ -9,7 +9,7 @@ using System;
 public abstract class AiAgent : MonoBehaviour
 {
     //----Componets
-    protected PathfindingState _pathFindingSystem ;
+    //protected PathfindingState _pathFindingSystem ;
     protected FiniteStateMachine _fsm = new FiniteStateMachine();
 
 
@@ -45,13 +45,16 @@ public abstract class AiAgent : MonoBehaviour
 
     protected virtual void Update() => Move();
     
+    
+    public Vector3 GetTarget() => _target.position;
+
+    #region STEERING_BEHAVIOR
+
     public void Move()
     {
         transform.position += _velocity * Time.deltaTime;
         transform.forward = _velocity;
     }
-
-    public Vector3 GetTarget() => _target.position;
 
     public Vector3 Seek(Vector3 target)
     {
@@ -61,10 +64,10 @@ public abstract class AiAgent : MonoBehaviour
 
         desired *= FlyWeightPointer.EnemiesAtributs.speed;
 
-        return CalculateStreering(desired);
+        return CalculateSteering(desired);
     }
 
-    protected Vector3 CalculateStreering(Vector3 desired)
+    protected Vector3 CalculateSteering(Vector3 desired)
     {
         Vector3 steering = desired - _velocity;
         steering = Vector3.ClampMagnitude(steering, _maxForce * Time.deltaTime);
@@ -78,24 +81,11 @@ public abstract class AiAgent : MonoBehaviour
         _velocity = Vector3.ClampMagnitude(_velocity + force, FlyWeightPointer.EnemiesAtributs.speed);
     }
 
-    public Node SetEndNode()
-    {
-        //int carlos = _nodeArrayIndex + 1;
-        //
-        //if (carlos > _patrolNodes.Length)
-        //{
-        //    _nodeArrayIndex = 0;
-        //}
-        //
-        //Node goalNode = _patrolNodes[carlos];
-        //
-        //return goalNode;
+    #endregion
 
-        return _patrolNodes[_nodeArrayIndex];
-    }
+    public Node SetEndNode() => _patrolNodes[_nodeArrayIndex];  
 
     public Node GetStartNode() => _currentNode;
-    
 
     public void SetCurrentNode(Node pos, int index)
     {
@@ -104,7 +94,6 @@ public abstract class AiAgent : MonoBehaviour
     }
 
     Vector3 DirFromAngel(float angleInDegrees) => new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
-
 
     private void OnDestroy() => StatesDestructor?.Invoke();
     

@@ -3,8 +3,6 @@
 //--------------------------------------------
 
 
-using System.Collections;
-using System.Collections.Generic;
 using System;
 using UnityEngine;
 
@@ -29,9 +27,6 @@ public class PlayerController
         OnPlay += MovementController;
     }
 
-    private void DeleteMovement() => OnPlay = delegate { };
-    
-
     public void ArtificialUpdate()
     {
         OnPlay();
@@ -48,7 +43,7 @@ public class PlayerController
 
     private void PauseButton()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !GameManager.Instance.GameOverCheck)
             EventManager.Trigger(EventEnum.Pause, true);
     }
 }
