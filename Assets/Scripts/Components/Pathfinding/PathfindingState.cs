@@ -109,7 +109,7 @@ public class PathfindingState : States
 
         if (_path.Count > 0)
         {
-            if (Vector3.Distance(_agent.transform.position, _path[0]) >= FlyWeightPointer.EnemiesAtributs.minPathfindingRecalculate)
+            if (Vector3.Distance(_agent.transform.position, _path[0]) >= 25)
             {
                 Debug.Log("Recalculated");
                 var newStart = GetNode(_agent.transform.position);
