@@ -9,9 +9,7 @@ using System;
 public abstract class AiAgent : MonoBehaviour
 {
     //----Componets
-    //protected PathfindingState _pathFindingSystem ;
     protected FiniteStateMachine _fsm = new FiniteStateMachine();
-
 
     //-----Atributs
     protected Vector3 _velocity;
@@ -42,6 +40,8 @@ public abstract class AiAgent : MonoBehaviour
     protected Transform _target;
 
     public event Action StatesDestructor;
+    [SerializeField]
+    private bool GizmosActivated;
 
     protected virtual void Update() => Move();
     
@@ -100,22 +100,25 @@ public abstract class AiAgent : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.waypointRadius);
+        if (GizmosActivated)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.waypointRadius);
 
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.viewRadius);
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.viewRadius);
 
-        Vector3 dirA = DirFromAngel(FlyWeightPointer.EnemiesAtributs.viewAngle / 2 + transform.eulerAngles.y);
-        Vector3 dirB = DirFromAngel(-FlyWeightPointer.EnemiesAtributs.viewAngle / 2 + transform.eulerAngles.y);
+            Vector3 dirA = DirFromAngel(FlyWeightPointer.EnemiesAtributs.viewAngle / 2 + transform.eulerAngles.y);
+            Vector3 dirB = DirFromAngel(-FlyWeightPointer.EnemiesAtributs.viewAngle / 2 + transform.eulerAngles.y);
 
-        Gizmos.DrawLine(transform.position, transform.position + dirA.normalized * FlyWeightPointer.EnemiesAtributs.viewRadius);
-        Gizmos.DrawLine(transform.position, transform.position + dirB.normalized * FlyWeightPointer.EnemiesAtributs.viewRadius);
+            Gizmos.DrawLine(transform.position, transform.position + dirA.normalized * FlyWeightPointer.EnemiesAtributs.viewRadius);
+            Gizmos.DrawLine(transform.position, transform.position + dirB.normalized * FlyWeightPointer.EnemiesAtributs.viewRadius);
        
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.playerDistance);
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.playerDistance);
 
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.nodeDistance);
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(transform.position, FlyWeightPointer.EnemiesAtributs.nodeDistance);
+        }
     }
 }

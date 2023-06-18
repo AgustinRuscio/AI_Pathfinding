@@ -20,9 +20,10 @@ public class Node : MonoBehaviour
     [SerializeField]
     private LayerMask _obstableMask;
 
+    [SerializeField]
+    private bool GizmosActivated;
 
     public int Cost { get { return _cost; }}
-
 
     public List<Node> GetNeighbors()
     {
@@ -46,8 +47,11 @@ public class Node : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
+        if (GizmosActivated)
+        {
+            Gizmos.color = Color.yellow;
 
-        Gizmos.DrawWireSphere(transform.position, _neighborRadius);
+            Gizmos.DrawWireSphere(transform.position, _neighborRadius);
+        }
     }
 }

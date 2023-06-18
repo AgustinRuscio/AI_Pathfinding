@@ -4,6 +4,7 @@
 
 
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PathfindingState : States
@@ -105,8 +106,24 @@ public class PathfindingState : States
         if (Tools.InLineOfSight(_agent.transform.position, goalNode.transform.position, _obstacleMask))
             finiteStateMach.ChangeState(StatesEnum.Patrol);
 
+        
 
-        MovethroughNodes();
+        if (_path.Count > 0)
+        {
+            if (Vector3.Distance(_agent.transform.position, _path[0]) >= 25)
+            {
+                Debug.Log("Recalculated");
+                var newStart = GetNode(_agent.transform.position);
+                _path = AStar(newStart, goalNode);
+                _path.Reverse();
+            }
+            else
+            {
+                MovethroughNodes();
+            }
+        }
+        else
+            finiteStateMach.ChangeState(StatesEnum.Patrol);
     }
 
     private void MovethroughNodes()
@@ -185,4 +202,6 @@ public class PathfindingState : States
     private void UnSuscribeEvents() => EventManager.Unsubscribe(EventEnum.PlayerLocated, PlayerLocated);
 
     public override void OnStop() { }
+
+   
 }

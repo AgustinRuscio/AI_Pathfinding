@@ -4,7 +4,6 @@
 
 
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyModel : AiAgent
@@ -17,11 +16,7 @@ public class EnemyModel : AiAgent
     [SerializeField]
     private LayerMask _nodeMask;
 
-    //private bool _search;
-
     private Vector3 _playerPos;
-
-    //private List<Vector3> _path = new List<Vector3>();
 
     private event Action OnPunch;
 
@@ -43,8 +38,6 @@ public class EnemyModel : AiAgent
         EnemyView _enemyView = new EnemyView();
         _enemyView.SetAnimator(_animator);
         OnPunch += _enemyView.Punch;
-
-        //_pathFindingSystem = new PathfindingState().SetAgent(this).SetLayers(_nodeMask, _obstaclesMask).SetPlayerLayer(_playerMask);
 
         //------Finite State machine States
         _fsm.AddState(StatesEnum.Patrol, new PatrolState(this, _obstaclesMask, _playerMask).SetPatrolAgentTransform(transform).SetWayPoints(_patrolNodes, _nodeArrayIndex).SetWaypointRadius(FlyWeightPointer.EnemiesAtributs.waypointRadius));
@@ -98,6 +91,7 @@ public class EnemyModel : AiAgent
         //}
         #endregion
     }
+
     //private Node GetNode(Vector3 initPos)
     //{
     //    var nearNode = Physics.OverlapSphere(initPos, FlyWeightPointer.EnemiesAtributs.viewRadius, _nodeMask);
@@ -148,36 +142,30 @@ public class EnemyModel : AiAgent
         if(Vector3.Distance(local, _playerPos) > 10)
         {
             if (_fsm.CurrentState() == StatesEnum.Patrol)
-            {
                 _fsm.ChangeState(StatesEnum.GoToLocation, (Vector3)parameters[0]);
-            }
+            
 
             if (_fsm.CurrentState() == StatesEnum.PathFinding)
-            {
                 _fsm.ChangeState(StatesEnum.GoToLocation, (Vector3)parameters[0]);
-            }
+            
+
             _playerPos = local;
         }
     }
 
     public void PuchLogic()
     {
-        //_enemyView.Punch();
         OnPunch();
         timer.ResetTimer();
     }
 
     #region ANIMATION_EVENTS
 
-    private void ActivatePunch()
-    {
-        _punchZone.gameObject.SetActive(true);
-    }
+    private void ActivatePunch() => _punchZone.gameObject.SetActive(true);
+    
 
-    private void DeactivatePunch()
-    {
-        _punchZone.gameObject.SetActive(false);
-    }
+    private void DeactivatePunch() => _punchZone.gameObject.SetActive(false);
+    
 
     #endregion
 
