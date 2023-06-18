@@ -3401,10 +3401,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: terraced1am (6)
       objectReference: {fileID: 0}
-    - target: {fileID: 153548, guid: 1e03d6e349b09fd4a89cd2f2b585cee7, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 431636, guid: 1e03d6e349b09fd4a89cd2f2b585cee7, type: 3}
       propertyPath: m_RootOrder
       value: 99
@@ -4163,10 +4159,6 @@ PrefabInstance:
     - target: {fileID: 101136, guid: 51f909ab3182fa14d8c591219eb73973, type: 3}
       propertyPath: m_Name
       value: terraced4a (9)
-      objectReference: {fileID: 0}
-    - target: {fileID: 101136, guid: 51f909ab3182fa14d8c591219eb73973, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 435964, guid: 51f909ab3182fa14d8c591219eb73973, type: 3}
       propertyPath: m_RootOrder
@@ -6557,10 +6549,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: terraced3c (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 172120, guid: 4cc8e89eda71bd54a8b4e8b1b34557cb, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 411646, guid: 4cc8e89eda71bd54a8b4e8b1b34557cb, type: 3}
       propertyPath: m_RootOrder
       value: 15
@@ -7267,10 +7255,6 @@ PrefabInstance:
     - target: {fileID: 137032, guid: f5b6fd61be20b924490efc9fb37784f2, type: 3}
       propertyPath: m_Name
       value: terraced1cm (3)
-      objectReference: {fileID: 0}
-    - target: {fileID: 137032, guid: f5b6fd61be20b924490efc9fb37784f2, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 438372, guid: f5b6fd61be20b924490efc9fb37784f2, type: 3}
       propertyPath: m_RootOrder

@@ -106,7 +106,6 @@ public class PathfindingState : States
         if (Tools.InLineOfSight(_agent.transform.position, goalNode.transform.position, _obstacleMask))
             finiteStateMach.ChangeState(StatesEnum.Patrol);
 
-        
 
         if (_path.Count > 0)
         {
@@ -118,9 +117,8 @@ public class PathfindingState : States
                 _path.Reverse();
             }
             else
-            {
                 MovethroughNodes();
-            }
+            
         }
         else
             finiteStateMach.ChangeState(StatesEnum.Patrol);
