@@ -13,4 +13,5 @@ public class FlyWeight
     public float nodeDistance;
     public float playerDistance;
     public float punchCoolDown;
+    public float minPathfindingRecalculate;
 }

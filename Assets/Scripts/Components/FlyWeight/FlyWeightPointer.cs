@@ -15,5 +15,6 @@ public class FlyWeightPointer
         nodeDistance = 2,
         playerDistance = 3,
         punchCoolDown = 3,
+        minPathfindingRecalculate = 25
     };
 }
